@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'accounts',
     'partners',
     'django_extensions',
+    'AUTH_USER_MODEL',
     'rest_framework_simplejwt',  # JWT Support
 ]
 
