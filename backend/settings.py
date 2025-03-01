@@ -2,7 +2,6 @@ import os
 import dj_database_url
 from pathlib import Path
 from datetime import timedelta
-from django.contrib.auth import get_user_model
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +23,6 @@ INSTALLED_APPS = [
     'accounts',
     'partners',
     'django_extensions',
-    'AUTH_USER_MODEL',
     'rest_framework_simplejwt',  # JWT Support
 ]
 
@@ -43,7 +41,7 @@ ROOT_URLCONF = 'backend.urls'
 
 # ✅ Use Render PostgreSQL
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    'default': dj_database_url.config(default=os.getenv('postgresql://postgredb_hu5i_user:kPq57U2d3dCXyb5fcb8egLYJpO4vJm1y@dpg-cv1ebt8gph6c73b0tolg-a.singapore-postgres.render.com/postgredb_hu5i'))
 }
 
 TEMPLATES = [
@@ -109,16 +107,3 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-
-# ✅ Automatically Create Superuser
-User = get_user_model()
-SUPERUSER_USERNAME = os.getenv("DJANGO_SUPERUSER_USERNAME", "Aakash")
-SUPERUSER_EMAIL = os.getenv("DJANGO_SUPERUSER_EMAIL", "aakashsik22@gmail.com")
-SUPERUSER_PASSWORD = os.getenv("DJANGO_SUPERUSER_PASSWORD", "password123")
-
-if not User.objects.filter(username=SUPERUSER_USERNAME).exists():
-    try:
-        User.objects.create_superuser(SUPERUSER_USERNAME, SUPERUSER_EMAIL, SUPERUSER_PASSWORD)
-        print("✅ Superuser created automatically.")
-    except Exception as e:
-        print(f"❌ Error creating superuser: {e}")
