@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 
 import os
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 
@@ -19,9 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '-eoeZ3nVauHYMGuCCv9cA-a8XUJOJT39b5FE8WZNNcU1mrXMHYB0xQUuPi7Qi94o')
 
-DEBUG = True
+DEBUG = False  # Set to False in production
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['advertisment-backend.onrender.com', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -51,16 +52,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
-# ✅ Use PostgreSQL
+# ✅ Use Render PostgreSQL
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'myprojectdb',
-        'USER': 'postgres',
-        'PASSWORD': 'S,ervice@22',  # ❗ Change this for security
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
 TEMPLATES = [
@@ -92,10 +86,11 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ✅ Allow all CORS for now (change in production)
+# ✅ Allow all CORS for now (restrict in production)
 CORS_ALLOW_ALL_ORIGINS = True
 
 # ✅ Use Custom User Model
@@ -116,3 +111,14 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+
+
+# ✅ Security Settings for Production
+CSRF_TRUSTED_ORIGINS = ['https://advertisment-backend.onrender.com']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
